@@ -1,0 +1,14 @@
+15:32:07 **** Incremental Build of configuration Debug for project 001_GPIO ****
+make -j12 all 
+arm-none-eabi-size  001_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5000	    100	   1900	   7000	   1b58	001_GPIO.elf
+Finished building: default.size.stdout
+ 
+15:32:10 **** Incremental Build of configuration Debug for project 001_GPIO ****
+make -j12 all 
+arm-none-eabi-size  001_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5000	    100	   1900	   7000	   1b58	001_GPIO.elf
+Finished building: default.size.stdout
+ 
