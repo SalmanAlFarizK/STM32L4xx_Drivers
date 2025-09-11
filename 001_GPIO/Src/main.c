@@ -18,10 +18,8 @@
 
 #include <stdio.h>
 #include <stdint.h>
-
-#if !defined(__SOFT_FP__) && defined(__ARM_FP)
-  #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
-#endif
+#include "stm32l476xx.h"
+#include "gpio.h"
 
 void Delay(uint32_t uiMs)
 {
@@ -32,14 +30,39 @@ void Delay(uint32_t uiMs)
 	}
 }
 
+void InitLed(void);
+void TestLed(void);
+
 int main(void)
 {
-
-	unsigned int i = 0;
+	InitLed();
 	while(1)
 	{
-		i++;
-		printf(" %d Hello World\n",i);
+		TestLed();
 		Delay(50);
 	}
 }
+
+void InitLed(void)
+{
+	GPIO_Handle_t tLedGpio = {0};
+
+	tLedGpio.pGPIOx = GPIOA;
+	tLedGpio.GpioPinConfig.GPIO_PinMode = eGPIO_OpMode;
+	tLedGpio.GpioPinConfig.GPIO_PinNumber = eGPIO_PIN_5;
+	tLedGpio.GpioPinConfig.GPIO_PinOpType = eGPIO_OpPushPull;
+	tLedGpio.GpioPinConfig.GPIO_PinSpeed = eGPIO_LowSpeed;
+	tLedGpio.GpioPinConfig.GPIO_PinPuPdCtrl = eGPIO_NoPuPd;
+
+	GPIO_PeriClkCtrl(GPIOA, ENABLE);
+
+	GPIO_Init(&tLedGpio);
+
+	return;
+}
+
+void TestLed(void)
+{
+	GPIO_TogglePin(GPIOA, eGPIO_PIN_5);
+}
+
