@@ -21,6 +21,9 @@
 #include "stm32l476xx.h"
 #include "gpio.h"
 
+#define TRIGGER_PIN
+#define ECHO_PIN
+
 void Delay(uint32_t uiMs)
 {
 	unsigned int i = 0, j= 0;
@@ -32,14 +35,17 @@ void Delay(uint32_t uiMs)
 
 void InitLed(void);
 void TestLed(void);
+void InitUltraSonicSensor(void);
+void ReadUltraSonicSensor(void);
 
 int main(void)
 {
 	InitLed();
 	while(1)
 	{
-		TestLed();
-		Delay(50);
+		//TestLed();
+		printf("Hello");
+		Delay(500);
 	}
 }
 
@@ -64,5 +70,10 @@ void InitLed(void)
 void TestLed(void)
 {
 	GPIO_TogglePin(GPIOA, eGPIO_PIN_5);
+}
+
+void InitUltraSonicSensor(void)
+{
+
 }
 

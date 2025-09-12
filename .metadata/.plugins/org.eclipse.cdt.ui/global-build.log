@@ -1,14 +1,472 @@
-15:32:07 **** Incremental Build of configuration Debug for project 001_GPIO ****
+11:22:42 **** Incremental Build of configuration Debug for project 002_GPIO ****
 make -j12 all 
-arm-none-eabi-size  001_GPIO.elf 
+arm-none-eabi-size  002_GPIO.elf 
    text	   data	    bss	    dec	    hex	filename
-   5000	    100	   1900	   7000	   1b58	001_GPIO.elf
+    640	      8	   1568	   2216	    8a8	002_GPIO.elf
 Finished building: default.size.stdout
  
-15:32:10 **** Incremental Build of configuration Debug for project 001_GPIO ****
+11:26:51 **** Incremental Build of configuration Debug for project 001_GPIO ****
 make -j12 all 
 arm-none-eabi-size  001_GPIO.elf 
    text	   data	    bss	    dec	    hex	filename
-   5000	    100	   1900	   7000	   1b58	001_GPIO.elf
+   5968	    100	   1900	   7968	   1f20	001_GPIO.elf
+Finished building: default.size.stdout
+ 
+11:26:52 **** Clean-only build of configuration Debug for project 002_GPIO ****
+make -j12 clean 
+rm -rf ./Startup/startup_stm32l476rgtx.d ./Startup/startup_stm32l476rgtx.o
+rm -rf ./Src/main.cyclo ./Src/main.d ./Src/main.o ./Src/main.su ./Src/syscalls.cyclo ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.cyclo ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
+rm -rf 002_GPIO.elf 002_GPIO.list 002_GPIO.map default.size.stdout
+ 
+11:26:52 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Startup/startup_stm32l476rgtx.d" -MT"Startup/startup_stm32l476rgtx.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Startup/startup_stm32l476rgtx.o" "../Startup/startup_stm32l476rgtx.s"
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Src/syscalls.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/syscalls.d" -MT"Src/syscalls.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/syscalls.o"
+arm-none-eabi-gcc "../Src/sysmem.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/sysmem.d" -MT"Src/sysmem.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/sysmem.o"
+arm-none-eabi-gcc "../Drivers/Src/gpio.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Drivers/Src/gpio.d" -MT"Drivers/Src/gpio.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/Src/gpio.o"
+../Src/main.c:22:4: warning: #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use." [-Wcpp]
+   22 |   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
+      |    ^~~~~~~
+../Drivers/Src/gpio.c:8:10: fatal error: gpio.h: No such file or directory
+    8 | #include "gpio.h"
+      |          ^~~~~~~~
+compilation terminated.
+make: *** [Drivers/Src/subdir.mk:19: Drivers/Src/gpio.o] Error 1
+make: *** Waiting for unfinished jobs....
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
+11:27:38 **** Incremental Build of configuration Debug for project 001_GPIO ****
+make -j12 all 
+arm-none-eabi-size  001_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5968	    100	   1900	   7968	   1f20	001_GPIO.elf
+Finished building: default.size.stdout
+ 
+11:27:39 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"D:/BITSILICA/SALMAN/Learning/STM32/STM32_Projects/STM32L4xx_Drivers/002_GPIO/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Src/syscalls.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"D:/BITSILICA/SALMAN/Learning/STM32/STM32_Projects/STM32L4xx_Drivers/002_GPIO/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/syscalls.d" -MT"Src/syscalls.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/syscalls.o"
+arm-none-eabi-gcc "../Src/sysmem.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"D:/BITSILICA/SALMAN/Learning/STM32/STM32_Projects/STM32L4xx_Drivers/002_GPIO/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/sysmem.d" -MT"Src/sysmem.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/sysmem.o"
+arm-none-eabi-gcc "../Drivers/Src/gpio.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"D:/BITSILICA/SALMAN/Learning/STM32/STM32_Projects/STM32L4xx_Drivers/002_GPIO/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Drivers/Src/gpio.d" -MT"Drivers/Src/gpio.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/Src/gpio.o"
+../Src/main.c:22:4: warning: #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use." [-Wcpp]
+   22 |   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
+      |    ^~~~~~~
+arm-none-eabi-gcc -o "002_GPIO.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\BITSILICA\SALMAN\Learning\STM32\STM32_Projects\STM32L4xx_Drivers\002_GPIO\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="002_GPIO.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 002_GPIO.elf
+ 
+arm-none-eabi-size  002_GPIO.elf 
+arm-none-eabi-objdump -h -S 002_GPIO.elf  > "002_GPIO.list"
+   text	   data	    bss	    dec	    hex	filename
+    640	      8	   1568	   2216	    8a8	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+Finished building: 002_GPIO.list
+ 
+11:28:00 **** Incremental Build of configuration Debug for project 001_GPIO ****
+make -j12 all 
+arm-none-eabi-size  001_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5968	    100	   1900	   7968	   1f20	001_GPIO.elf
+Finished building: default.size.stdout
+ 
+11:28:01 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"D:/BITSILICA/SALMAN/Learning/STM32/STM32_Projects/STM32L4xx_Drivers/002_GPIO/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+../Src/main.c:23:4: warning: #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use." [-Wcpp]
+   23 |   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
+      |    ^~~~~~~
+arm-none-eabi-gcc -o "002_GPIO.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\BITSILICA\SALMAN\Learning\STM32\STM32_Projects\STM32L4xx_Drivers\002_GPIO\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="002_GPIO.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 002_GPIO.elf
+ 
+arm-none-eabi-size  002_GPIO.elf 
+arm-none-eabi-objdump -h -S 002_GPIO.elf  > "002_GPIO.list"
+   text	   data	    bss	    dec	    hex	filename
+    640	      8	   1568	   2216	    8a8	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+Finished building: 002_GPIO.list
+ 
+11:28:29 **** Incremental Build of configuration Debug for project 001_GPIO ****
+make -j12 all 
+arm-none-eabi-size  001_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5968	    100	   1900	   7968	   1f20	001_GPIO.elf
+Finished building: default.size.stdout
+ 
+11:28:29 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"D:/BITSILICA/SALMAN/Learning/STM32/STM32_Projects/STM32L4xx_Drivers/002_GPIO/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+arm-none-eabi-gcc -o "002_GPIO.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\BITSILICA\SALMAN\Learning\STM32\STM32_Projects\STM32L4xx_Drivers\002_GPIO\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="002_GPIO.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 002_GPIO.elf
+ 
+arm-none-eabi-size  002_GPIO.elf 
+arm-none-eabi-objdump -h -S 002_GPIO.elf  > "002_GPIO.list"
+   text	   data	    bss	    dec	    hex	filename
+   5888	    100	   1900	   7888	   1ed0	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+Finished building: 002_GPIO.list
+ 
+11:28:51 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-size  002_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5888	    100	   1900	   7888	   1ed0	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+11:30:08 **** Incremental Build of configuration Debug for project 001_GPIO ****
+make -j12 all 
+arm-none-eabi-size  001_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5968	    100	   1900	   7968	   1f20	001_GPIO.elf
+Finished building: default.size.stdout
+ 
+11:30:09 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"D:/BITSILICA/SALMAN/Learning/STM32/STM32_Projects/STM32L4xx_Drivers/002_GPIO/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+arm-none-eabi-gcc -o "002_GPIO.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\BITSILICA\SALMAN\Learning\STM32\STM32_Projects\STM32L4xx_Drivers\002_GPIO\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="002_GPIO.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 002_GPIO.elf
+ 
+arm-none-eabi-size  002_GPIO.elf 
+arm-none-eabi-objdump -h -S 002_GPIO.elf  > "002_GPIO.list"
+   text	   data	    bss	    dec	    hex	filename
+   4900	    100	   1900	   6900	   1af4	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+Finished building: 002_GPIO.list
+ 
+11:30:12 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-size  002_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4900	    100	   1900	   6900	   1af4	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+11:33:55 **** Incremental Build of configuration Debug for project 001_GPIO ****
+make -j12 all 
+arm-none-eabi-size  001_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5968	    100	   1900	   7968	   1f20	001_GPIO.elf
+Finished building: default.size.stdout
+ 
+11:33:55 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"D:/BITSILICA/SALMAN/Learning/STM32/STM32_Projects/STM32L4xx_Drivers/002_GPIO/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+arm-none-eabi-gcc -o "002_GPIO.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\BITSILICA\SALMAN\Learning\STM32\STM32_Projects\STM32L4xx_Drivers\002_GPIO\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="002_GPIO.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 002_GPIO.elf
+ 
+arm-none-eabi-size  002_GPIO.elf 
+arm-none-eabi-objdump -h -S 002_GPIO.elf  > "002_GPIO.list"
+   text	   data	    bss	    dec	    hex	filename
+   4900	    100	   1900	   6900	   1af4	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+Finished building: 002_GPIO.list
+ 
+11:34:00 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-size  002_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   4900	    100	   1900	   6900	   1af4	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+11:34:23 **** Incremental Build of configuration Debug for project 001_GPIO ****
+make -j12 all 
+arm-none-eabi-size  001_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5968	    100	   1900	   7968	   1f20	001_GPIO.elf
+Finished building: default.size.stdout
+ 
+11:34:24 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"D:/BITSILICA/SALMAN/Learning/STM32/STM32_Projects/STM32L4xx_Drivers/002_GPIO/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+arm-none-eabi-gcc -o "002_GPIO.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\BITSILICA\SALMAN\Learning\STM32\STM32_Projects\STM32L4xx_Drivers\002_GPIO\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="002_GPIO.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 002_GPIO.elf
+ 
+arm-none-eabi-size  002_GPIO.elf 
+arm-none-eabi-objdump -h -S 002_GPIO.elf  > "002_GPIO.list"
+   text	   data	    bss	    dec	    hex	filename
+   5892	    100	   1900	   7892	   1ed4	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+Finished building: 002_GPIO.list
+ 
+11:34:30 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-size  002_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5892	    100	   1900	   7892	   1ed4	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+11:35:48 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"D:/BITSILICA/SALMAN/Learning/STM32/STM32_Projects/STM32L4xx_Drivers/002_GPIO/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+arm-none-eabi-gcc -o "002_GPIO.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\BITSILICA\SALMAN\Learning\STM32\STM32_Projects\STM32L4xx_Drivers\002_GPIO\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="002_GPIO.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 002_GPIO.elf
+ 
+arm-none-eabi-size  002_GPIO.elf 
+arm-none-eabi-objdump -h -S 002_GPIO.elf  > "002_GPIO.list"
+   text	   data	    bss	    dec	    hex	filename
+   5972	    100	   1900	   7972	   1f24	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+Finished building: 002_GPIO.list
+ 
+11:44:26 **** Incremental Build of configuration Debug for project 001_GPIO ****
+make -j12 all 
+arm-none-eabi-size  001_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5968	    100	   1900	   7968	   1f20	001_GPIO.elf
+Finished building: default.size.stdout
+ 
+11:44:27 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-gcc "../Drivers/Src/gpio.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"D:/BITSILICA/SALMAN/Learning/STM32/STM32_Projects/STM32L4xx_Drivers/002_GPIO/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Drivers/Src/gpio.d" -MT"Drivers/Src/gpio.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/Src/gpio.o"
+../Drivers/Src/gpio.c:14:17: error: unknown type name 'GPIO_TypeDef'
+   14 | bool isDebugPin(GPIO_TypeDef* GPIOx, uint8_t pin)
+      |                 ^~~~~~~~~~~~
+../Drivers/Src/gpio.c: In function 'GPIO_Init':
+../Drivers/Src/gpio.c:40:20: warning: implicit declaration of function 'isDebugPin' [-Wimplicit-function-declaration]
+   40 |                 if(isDebugPin(ptGpioHandle->pGPIOx, ptGpioHandle->GpioPinConfig.GPIO_PinNumber))
+      |                    ^~~~~~~~~~
+make: *** [Drivers/Src/subdir.mk:19: Drivers/Src/gpio.o] Error 1
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
+11:45:08 **** Incremental Build of configuration Debug for project 001_GPIO ****
+make -j12 all 
+arm-none-eabi-size  001_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5968	    100	   1900	   7968	   1f20	001_GPIO.elf
+Finished building: default.size.stdout
+ 
+11:45:08 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-gcc "../Drivers/Src/gpio.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"D:/BITSILICA/SALMAN/Learning/STM32/STM32_Projects/STM32L4xx_Drivers/002_GPIO/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Drivers/Src/gpio.d" -MT"Drivers/Src/gpio.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/Src/gpio.o"
+arm-none-eabi-gcc -o "002_GPIO.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\BITSILICA\SALMAN\Learning\STM32\STM32_Projects\STM32L4xx_Drivers\002_GPIO\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="002_GPIO.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 002_GPIO.elf
+ 
+arm-none-eabi-size  002_GPIO.elf 
+arm-none-eabi-objdump -h -S 002_GPIO.elf  > "002_GPIO.list"
+   text	   data	    bss	    dec	    hex	filename
+   6096	    100	   1900	   8096	   1fa0	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+Finished building: 002_GPIO.list
+ 
+11:45:30 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-size  002_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   6096	    100	   1900	   8096	   1fa0	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+11:47:26 **** Incremental Build of configuration Debug for project 001_GPIO ****
+make -j12 all 
+arm-none-eabi-size  001_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5968	    100	   1900	   7968	   1f20	001_GPIO.elf
+Finished building: default.size.stdout
+ 
+11:47:26 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-gcc "../Drivers/Src/gpio.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"D:/BITSILICA/SALMAN/Learning/STM32/STM32_Projects/STM32L4xx_Drivers/002_GPIO/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Drivers/Src/gpio.d" -MT"Drivers/Src/gpio.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/Src/gpio.o"
+arm-none-eabi-gcc -o "002_GPIO.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\BITSILICA\SALMAN\Learning\STM32\STM32_Projects\STM32L4xx_Drivers\002_GPIO\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="002_GPIO.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 002_GPIO.elf
+ 
+arm-none-eabi-size  002_GPIO.elf 
+arm-none-eabi-objdump -h -S 002_GPIO.elf  > "002_GPIO.list"
+   text	   data	    bss	    dec	    hex	filename
+   6072	    100	   1900	   8072	   1f88	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+Finished building: 002_GPIO.list
+ 
+11:47:40 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-size  002_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   6072	    100	   1900	   8072	   1f88	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+11:51:15 **** Incremental Build of configuration Debug for project 001_GPIO ****
+make -j12 all 
+arm-none-eabi-size  001_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5968	    100	   1900	   7968	   1f20	001_GPIO.elf
+Finished building: default.size.stdout
+ 
+11:51:15 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-gcc "../Drivers/Src/gpio.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"D:/BITSILICA/SALMAN/Learning/STM32/STM32_Projects/STM32L4xx_Drivers/002_GPIO/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Drivers/Src/gpio.d" -MT"Drivers/Src/gpio.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/Src/gpio.o"
+arm-none-eabi-gcc -o "002_GPIO.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\BITSILICA\SALMAN\Learning\STM32\STM32_Projects\STM32L4xx_Drivers\002_GPIO\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="002_GPIO.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 002_GPIO.elf
+ 
+arm-none-eabi-size  002_GPIO.elf 
+arm-none-eabi-objdump -h -S 002_GPIO.elf  > "002_GPIO.list"
+   text	   data	    bss	    dec	    hex	filename
+   6100	    100	   1900	   8100	   1fa4	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+Finished building: 002_GPIO.list
+ 
+11:51:36 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-size  002_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   6100	    100	   1900	   8100	   1fa4	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+12:00:35 **** Incremental Build of configuration Debug for project 001_GPIO ****
+make -j12 all 
+arm-none-eabi-size  001_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5968	    100	   1900	   7968	   1f20	001_GPIO.elf
+Finished building: default.size.stdout
+ 
+12:00:36 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-gcc "../Src/syscalls.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"D:/BITSILICA/SALMAN/Learning/STM32/STM32_Projects/STM32L4xx_Drivers/002_GPIO/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/syscalls.d" -MT"Src/syscalls.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/syscalls.o"
+arm-none-eabi-gcc -o "002_GPIO.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\BITSILICA\SALMAN\Learning\STM32\STM32_Projects\STM32L4xx_Drivers\002_GPIO\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="002_GPIO.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 002_GPIO.elf
+ 
+arm-none-eabi-size  002_GPIO.elf 
+arm-none-eabi-objdump -h -S 002_GPIO.elf  > "002_GPIO.list"
+   text	   data	    bss	    dec	    hex	filename
+   6180	    100	   1900	   8180	   1ff4	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+Finished building: 002_GPIO.list
+ 
+12:04:56 **** Incremental Build of configuration Debug for project 001_GPIO ****
+make -j12 all 
+arm-none-eabi-size  001_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5968	    100	   1900	   7968	   1f20	001_GPIO.elf
+Finished building: default.size.stdout
+ 
+12:04:56 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-gcc "../Drivers/Src/gpio.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"D:/BITSILICA/SALMAN/Learning/STM32/STM32_Projects/STM32L4xx_Drivers/002_GPIO/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Drivers/Src/gpio.d" -MT"Drivers/Src/gpio.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/Src/gpio.o"
+arm-none-eabi-gcc -o "002_GPIO.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\BITSILICA\SALMAN\Learning\STM32\STM32_Projects\STM32L4xx_Drivers\002_GPIO\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="002_GPIO.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 002_GPIO.elf
+ 
+arm-none-eabi-size  002_GPIO.elf 
+arm-none-eabi-objdump -h -S 002_GPIO.elf  > "002_GPIO.list"
+   text	   data	    bss	    dec	    hex	filename
+   6188	    100	   1900	   8188	   1ffc	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+Finished building: 002_GPIO.list
+ 
+12:04:59 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-size  002_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   6188	    100	   1900	   8188	   1ffc	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+12:06:04 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-size  002_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   6188	    100	   1900	   8188	   1ffc	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+12:06:56 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-size  002_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   6188	    100	   1900	   8188	   1ffc	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+12:08:03 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-size  002_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   6188	    100	   1900	   8188	   1ffc	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+12:08:32 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-size  002_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   6188	    100	   1900	   8188	   1ffc	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+12:14:23 **** Incremental Build of configuration Debug for project 001_GPIO ****
+make -j12 all 
+arm-none-eabi-size  001_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5968	    100	   1900	   7968	   1f20	001_GPIO.elf
+Finished building: default.size.stdout
+ 
+12:14:23 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"D:/BITSILICA/SALMAN/Learning/STM32/STM32_Projects/STM32L4xx_Drivers/002_GPIO/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+../Src/main.c:54:6: error: conflicting types for 'ReadUltraSonicSensor'; have 'void(void)'
+   54 | void ReadUltraSonicSensor(void);
+      |      ^~~~~~~~~~~~~~~~~~~~
+../Src/main.c:32:10: note: previous declaration of 'ReadUltraSonicSensor' with type 'uint32_t(void)' {aka 'long unsigned int(void)'}
+   32 | uint32_t ReadUltraSonicSensor(void);
+      |          ^~~~~~~~~~~~~~~~~~~~
+../Src/main.c: In function 'main':
+../Src/main.c:62:20: error: void value not ignored as it ought to be
+   62 |                 if(ReadUltraSonicSensor() < 10)
+      |                    ^~~~~~~~~~~~~~~~~~~~~~
+make: *** [Src/subdir.mk:25: Src/main.o] Error 1
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
+12:15:02 **** Incremental Build of configuration Debug for project 001_GPIO ****
+make -j12 all 
+arm-none-eabi-size  001_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5968	    100	   1900	   7968	   1f20	001_GPIO.elf
+Finished building: default.size.stdout
+ 
+12:15:02 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"D:/BITSILICA/SALMAN/Learning/STM32/STM32_Projects/STM32L4xx_Drivers/002_GPIO/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+arm-none-eabi-gcc -o "002_GPIO.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\BITSILICA\SALMAN\Learning\STM32\STM32_Projects\STM32L4xx_Drivers\002_GPIO\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="002_GPIO.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 002_GPIO.elf
+ 
+arm-none-eabi-size  002_GPIO.elf 
+arm-none-eabi-objdump -h -S 002_GPIO.elf  > "002_GPIO.list"
+   text	   data	    bss	    dec	    hex	filename
+   6700	    104	   1912	   8716	   220c	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+Finished building: 002_GPIO.list
+ 
+12:25:31 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-size  002_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   6700	    104	   1912	   8716	   220c	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+12:30:13 **** Incremental Build of configuration Debug for project 001_GPIO ****
+make -j12 all 
+arm-none-eabi-size  001_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   5968	    100	   1900	   7968	   1f20	001_GPIO.elf
+Finished building: default.size.stdout
+ 
+12:30:14 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32L4 -DSTM32 -DNUCLEO_L476RG -DSTM32L476RGTx -c -I../Inc -I"D:/BITSILICA/SALMAN/Learning/STM32/STM32_Projects/STM32L4xx_Drivers/002_GPIO/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+arm-none-eabi-gcc -o "002_GPIO.elf" @"objects.list"   -mcpu=cortex-m4 -T"D:\BITSILICA\SALMAN\Learning\STM32\STM32_Projects\STM32L4xx_Drivers\002_GPIO\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="002_GPIO.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 002_GPIO.elf
+ 
+arm-none-eabi-size  002_GPIO.elf 
+arm-none-eabi-objdump -h -S 002_GPIO.elf  > "002_GPIO.list"
+   text	   data	    bss	    dec	    hex	filename
+   6672	    104	   1912	   8688	   21f0	002_GPIO.elf
+Finished building: default.size.stdout
+ 
+Finished building: 002_GPIO.list
+ 
+12:30:18 **** Incremental Build of configuration Debug for project 002_GPIO ****
+make -j12 all 
+arm-none-eabi-size  002_GPIO.elf 
+   text	   data	    bss	    dec	    hex	filename
+   6672	    104	   1912	   8688	   21f0	002_GPIO.elf
 Finished building: default.size.stdout
  
