@@ -50,7 +50,7 @@ void GPIO_Init(GPIO_Handle_t* ptGpioHandle)
 					   (2 * ptGpioHandle->GpioPinConfig.GPIO_PinNumber));
 
 			/* CClear the actual register. */
-			ptGpioHandle->pGPIOx->MODER &= ~(0x3 << (2 * ptGpioHandle->GpioPinConfig.GPIO_PinNumber));;
+			ptGpioHandle->pGPIOx->MODER &= ~(0x3 << (2 * ptGpioHandle->GpioPinConfig.GPIO_PinNumber));
 
 			/* Copy the register value to actual register. */
 			ptGpioHandle->pGPIOx->MODER |= uiRegVal;
