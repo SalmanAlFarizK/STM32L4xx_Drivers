@@ -27,12 +27,14 @@
 #define SPI_CR2_SSOE		(0x02)
 #define SPI_CR2_ERRIE		(0x05)
 #define SPI_CR2_RXNEIE		(0x06)
+#define SPI_CR2_TXEIE		(0x07)
 #define SPI_CR2_DS			(0x08)
 
 /* SPI SR Bit positions. */
 #define SPI_SR_RXNE			(0x00)
 #define SPI_SR_TXE			(0x01)
 #define SPI_SR_MODF			(0x05)
+#define SPI_SR_OVR			(0x06)
 #define SPI_SR_BSY			(0x07)
 #define SPI_SR_FRE			(0x08)
 
@@ -40,6 +42,18 @@
 #define SPI1_REG_RESET()		do{(RCC->RCC_APB2RSTR  |= (1 << 12)); (RCC->RCC_APB2RSTR  &= ~(1 << 12));}while(0)
 #define SPI2_REG_RESET()		do{(RCC->RCC_APB1RSTR1 |= (1 << 14)); (RCC->RCC_APB1RSTR1 &= ~(1 << 14));}while(0)
 #define SPI3_REG_RESET()		do{(RCC->RCC_APB1RSTR1 |= (1 << 15)); (RCC->RCC_APB1RSTR1 &= ~(1 << 15));}while(0)
+
+#define SPI_EVENT_TX_CMPLT		1
+#define SPI_EVENT_RX_CMPLT		2
+#define SPI_EVENT_OVR_ERR		3
+
+/******************************************************************************
+ * Static function declaration.
+ *****************************************************************************/
+static void HandleSpiTxeInt(SPI_Handle_t* ptSpiHandle);
+static void HandleSpiRxneInt(SPI_Handle_t* ptSpiHandle);
+static void HandleSpiOvrInt(SPI_Handle_t* ptSpiHandle);
+static void SpiApplicationEvntCallBack(SPI_Handle_t* ptSpiHandle, uint8_t ucEvnt);
 
 /******************************************************************************
  * @brief : Function For Initializing SPI Peripheral.
@@ -508,6 +522,42 @@ void SPI_TxRxData(SPI_Regdef_t* pSPIx, uint8_t* ucTxBuff,
  *****************************************************************************/
 void SPI_IRQConfig(uint8_t IRQNum, uint8_t EnOrDi)
 {
+	if(ENABLE == EnOrDi)
+	{
+		if(IRQNum <= 31)
+		{
+			/* ISER0 Register. */
+			*NVIC_ISER0 |= ( 1 << IRQNum);
+		}
+		else if(IRQNum > 31 && IRQNum < 64)
+		{
+			/* ISER1 Register. */
+			*NVIC_ISER1 |= ( 1 << (IRQNum % 32));
+		}
+		else if(IRQNum >= 64 && IRQNum < 96)
+		{
+			/* ISER2 Register. */
+			*NVIC_ISER2 |= ( 1 << (IRQNum % 64));
+		}
+	}
+	else
+	{
+		if(IRQNum <= 31)
+		{
+			/* ISER0 Register. */
+			*NVIC_ICER0 |= ( 1 << IRQNum);
+		}
+		else if(IRQNum > 31 && IRQNum < 64)
+		{
+			/* ISER1 Register. */
+			*NVIC_ICER1 |= ( 1 << (IRQNum % 32));
+		}
+		else if(IRQNum >= 64 && IRQNum < 96)
+		{
+			/* ISER2 Register. */
+			*NVIC_ICER2 |= ( 1 << (IRQNum % 64));
+		}
+	}
 	return;
 }
 
@@ -524,22 +574,6 @@ void SPI_IRQConfig(uint8_t IRQNum, uint8_t EnOrDi)
  *
  *****************************************************************************/
 void SPI_IRQPriorityConfig(uint8_t IRQNum, uint8_t PriorityVal)
-{
-	return;
-}
-
-/******************************************************************************
- * @brief : Function For Clearing interruot pending request.
- * @fn : GPIO_IRQHandling(SPI_Regdef_t* pSPIx)
- *
- * @param[in] : ptSpiHandle
- *
- * @param[out] : None.
- *
- * @return : None
- *
- *****************************************************************************/
-void SPI_IRQHandling(SPI_Regdef_t* pSPIx)
 {
 	return;
 }
@@ -572,4 +606,364 @@ bool IsSpiBusy(SPI_Regdef_t* pSPIx)
 
 	/* Return the state. */
 	return isSpiBusy;
+}
+
+/******************************************************************************
+ * @brief : Function For Clearing interruot pending request.
+ * @fn : GPIO_IRQHandling(SPI_Regdef_t* pSPIx)
+ *
+ * @param[in] : ptSpiHandle
+ *
+ * @param[out] : None.
+ *
+ * @return : None
+ *
+ *****************************************************************************/
+void SPI_TxDataIT(SPI_Handle_t* ptSpiHandle, uint8_t* pucTxBuff,
+				uint16_t uhTxSize)
+{
+	/* Validity check. */
+	if((NULL != ptSpiHandle)
+	&& (NULL != pucTxBuff)
+	&& (NULL != pucTxBuff + uhTxSize))
+	{
+		if(ptSpiHandle->ucTxState != eSpiOpStateBsyInTx)
+		{
+			/* Save the TX buff address and length in some global variables. */
+			ptSpiHandle->pucTxBuff = pucTxBuff;
+
+			ptSpiHandle->uhTxLen = uhTxSize;
+
+			/* Mark the SPI state as busy in transmission. */
+			ptSpiHandle->ucTxState = eSpiOpStateBsyInTx;
+
+			/* Enable the TXEIE control bit whenever TXE flag is set in SR. */
+			ptSpiHandle->pSPIx->SPI_CR2 &= ~( 1 << SPI_CR2_TXEIE);
+
+			ptSpiHandle->pSPIx->SPI_CR2 |= ( 1 << SPI_CR2_TXEIE);
+		}
+	}
+
+	return;
+}
+
+/******************************************************************************
+ * @brief : Function For Clearing interruot pending request.
+ * @fn : GPIO_IRQHandling(SPI_Regdef_t* pSPIx)
+ *
+ * @param[in] : ptSpiHandle
+ *
+ * @param[out] : None.
+ *
+ * @return : None
+ *
+ *****************************************************************************/
+void SPI_RxDataIT(SPI_Handle_t* ptSpiHandle,
+				  uint8_t* pucRxBuff, uint16_t uhRxSize)
+{
+	/* Validity check. */
+	if((NULL != ptSpiHandle)
+	&& (NULL != pucRxBuff)
+	&& (NULL != pucRxBuff + uhRxSize))
+	{
+		if(ptSpiHandle->ucRxState != eSpiOpStateBsyInRx)
+		{
+			/* Save the TX buff address and length in some global variables. */
+			ptSpiHandle->pucRxBuff = pucRxBuff;
+
+			ptSpiHandle->uhRxLen = uhRxSize;
+
+			/* Mark the SPI state as busy in transmission. */
+			ptSpiHandle->ucRxState = eSpiOpStateBsyInRx;
+
+			/* Enable the TXEIE control bit whenever TXE flag is set in SR. */
+			ptSpiHandle->pSPIx->SPI_CR2 &= ~( 1 << SPI_CR2_RXNEIE);
+
+			ptSpiHandle->pSPIx->SPI_CR2 |= ( 1 << SPI_CR2_RXNEIE);
+		}
+	}
+
+	return;
+}
+
+
+/******************************************************************************
+ * @brief : Function For Clearing interruot pending request.
+ * @fn : GPIO_IRQHandling(SPI_Regdef_t* pSPIx)
+ *
+ * @param[in] : ptSpiHandle
+ *
+ * @param[out] : None.
+ *
+ * @return : None
+ *
+ *****************************************************************************/
+void SPI_IRQHandling(SPI_Handle_t* ptSpiHandle)
+{
+	uint8_t ucReg1 = 0;
+	uint8_t ucReg2 = 0;
+
+	if(NULL != ptSpiHandle)
+	{
+		/* First check the TXE bit. */
+		ucReg1 = (ptSpiHandle->pSPIx->SPI_SR & (1 << SPI_SR_TXE));
+		ucReg2 = (ptSpiHandle->pSPIx->SPI_CR2 & (1 << SPI_CR2_TXEIE));
+
+		if(ucReg1 && ucReg2)
+		{
+			/* Handle TX interrupt. */
+			HandleSpiTxeInt(ptSpiHandle);
+
+		}
+
+		/* Check the RXNE bit. */
+		ucReg1 = (ptSpiHandle->pSPIx->SPI_SR & (1 << SPI_SR_RXNE));
+		ucReg2 = (ptSpiHandle->pSPIx->SPI_CR2 & (1 << SPI_CR2_RXNEIE));
+
+		if(ucReg1 && ucReg2)
+		{
+			/* Handle RX interrupt. */
+			HandleSpiRxneInt(ptSpiHandle);
+		}
+
+		/* Check for OVR flag. */
+		ucReg1 = ptSpiHandle->pSPIx->SPI_SR & ( 1 << SPI_SR_OVR);
+		ucReg2 = (ptSpiHandle->pSPIx->SPI_CR2 & (1 << SPI_CR2_RXNEIE));
+
+		if(ucReg1 && ucReg2)
+		{
+			/* Handle OVR error. */
+			HandleSpiOvrInt(ptSpiHandle);
+		}
+	}
+
+	return;
+}
+
+/******************************************************************************
+ * @brief : Function For Clearing interruot pending request.
+ * @fn : GPIO_IRQHandling(SPI_Regdef_t* pSPIx)
+ *
+ * @param[in] : ptSpiHandle
+ *
+ * @param[out] : None.
+ *
+ * @return : None
+ *
+ *****************************************************************************/
+static void HandleSpiTxeInt(SPI_Handle_t* ptSpiHandle)
+{
+	if(NULL != ptSpiHandle)
+	{
+		/* Load the data register with the value from tx buffer. */
+		ptSpiHandle->pSPIx->SPI_DR = *(ptSpiHandle->pucTxBuff);
+
+		/* Increment the pointer. */
+		ptSpiHandle->pucTxBuff += 1;
+
+		/* Decrement the length. */
+		ptSpiHandle->uhTxLen -= 1;
+
+		if(!ptSpiHandle->uhTxLen)
+		{
+			/* Close the SPI communication. */
+			ptSpiHandle->pSPIx->SPI_CR2 &= ~(1 << SPI_CR2_TXEIE);
+
+			/* Reset the buffers. */
+			ptSpiHandle->pucTxBuff = NULL;
+
+			/* Update the TX state. */
+			ptSpiHandle->ucTxState = eSpiOpStateRdy;
+
+			SpiApplicationEvntCallBack(ptSpiHandle, SPI_EVENT_TX_CMPLT);
+
+		}
+
+	}
+	return;
+}
+
+/******************************************************************************
+ * @brief : Function For Clearing interruot pending request.
+ * @fn : GPIO_IRQHandling(SPI_Regdef_t* pSPIx)
+ *
+ * @param[in] : ptSpiHandle
+ *
+ * @param[out] : None.
+ *
+ * @return : None
+ *
+ *****************************************************************************/
+static void HandleSpiRxneInt(SPI_Handle_t* ptSpiHandle)
+{
+	if(NULL != ptSpiHandle)
+	{
+		/* Load the data register with the value from tx buffer. */
+		*(ptSpiHandle->pucRxBuff) = (uint8_t)ptSpiHandle->pSPIx->SPI_DR;
+
+		/* Increment the pointer. */
+		ptSpiHandle->pucRxBuff += 1;
+
+		/* Decrement the length. */
+		ptSpiHandle->uhRxLen -= 1;
+
+		if(!ptSpiHandle->uhRxLen)
+		{
+			/* Close the SPI communication. */
+			ptSpiHandle->pSPIx->SPI_CR2 &= ~(1 << SPI_CR2_RXNEIE);
+
+			/* Reset the buffers. */
+			ptSpiHandle->pucRxBuff = NULL;
+
+			/* Update the TX state. */
+			ptSpiHandle->ucTxState = eSpiOpStateRdy;
+
+			SpiApplicationEvntCallBack(ptSpiHandle, SPI_EVENT_RX_CMPLT);
+
+		}
+
+	}
+	return;
+}
+
+/******************************************************************************
+ * @brief : Function For Clearing interruot pending request.
+ * @fn : GPIO_IRQHandling(SPI_Regdef_t* pSPIx)
+ *
+ * @param[in] : ptSpiHandle
+ *
+ * @param[out] : None.
+ *
+ * @return : None
+ *
+ *****************************************************************************/
+static void HandleSpiOvrInt(SPI_Handle_t* ptSpiHandle)
+{
+	uint8_t ucTempVal = 0;
+
+	/* Clear the OVR flag. */
+	if(ptSpiHandle->ucTxState != eSpiOpStateBsyInTx)
+	{
+		ucTempVal = ptSpiHandle->pSPIx->SPI_DR;
+
+		ucTempVal = ptSpiHandle->pSPIx->SPI_SR;
+	}
+
+	/* Inform the application. */
+	SpiApplicationEvntCallBack(ptSpiHandle, SPI_EVENT_OVR_ERR);
+
+	(void)ucTempVal;
+
+	return;
+}
+
+/******************************************************************************
+ * @brief : Function For Clearing interruot pending request.
+ * @fn : GPIO_IRQHandling(SPI_Regdef_t* pSPIx)
+ *
+ * @param[in] : ptSpiHandle
+ *
+ * @param[out] : None.
+ *
+ * @return : None
+ *
+ *****************************************************************************/
+void SPI_ClearOvrFlag(SPI_Regdef_t* pSPIx)
+{
+	if(NULL != pSPIx)
+	{
+		pSPIx->SPI_SR &= ~(1 << SPI_SR_OVR);
+	}
+
+	return;
+}
+
+/******************************************************************************
+ * @brief : Function For Clearing interruot pending request.
+ * @fn : GPIO_IRQHandling(SPI_Regdef_t* pSPIx)
+ *
+ * @param[in] : ptSpiHandle
+ *
+ * @param[out] : None.
+ *
+ * @return : None
+ *
+ *****************************************************************************/
+void SPI_CloseTransmission(SPI_Handle_t* ptSpiHandle)
+{
+	if(NULL != ptSpiHandle)
+	{
+		/* Close the SPI communication. */
+		ptSpiHandle->pSPIx->SPI_CR2 &= ~(1 << SPI_CR2_TXEIE);
+
+		/* Reset the buffers. */
+		ptSpiHandle->pucTxBuff = NULL;
+
+		/* Update the TX state. */
+		ptSpiHandle->ucTxState = eSpiOpStateRdy;
+
+		ptSpiHandle->uhTxLen = 0;
+	}
+
+	return;
+}
+
+/******************************************************************************
+ * @brief : Function For Clearing interruot pending request.
+ * @fn : GPIO_IRQHandling(SPI_Regdef_t* pSPIx)
+ *
+ * @param[in] : ptSpiHandle
+ *
+ * @param[out] : None.
+ *
+ * @return : None
+ *
+ *****************************************************************************/
+void SPI_CloseReception(SPI_Handle_t* ptSpiHandle)
+{
+	if(NULL != ptSpiHandle)
+	{
+		/* Close the SPI communication. */
+		ptSpiHandle->pSPIx->SPI_CR2 &= ~(1 << SPI_CR2_RXNEIE);
+
+		/* Reset the buffers. */
+		ptSpiHandle->pucRxBuff = NULL;
+
+		/* Update the TX state. */
+		ptSpiHandle->ucTxState = eSpiOpStateRdy;
+
+		ptSpiHandle->uhRxLen = 0;
+	}
+
+	return;
+}
+
+void SPI_TransmitReceiveIT(SPI_Handle_t* ptSpiHandle,
+        uint8_t* pucTxBuff, uint8_t* pucRxBuff, uint16_t uhSize)
+{
+	if((NULL != ptSpiHandle) && (NULL != pucTxBuff) && (NULL != pucRxBuff))
+	{
+		ptSpiHandle->pucTxBuff = pucTxBuff;
+		ptSpiHandle->pucRxBuff = pucRxBuff;
+		ptSpiHandle->uhTxLen = uhSize;
+		ptSpiHandle->uhRxLen = uhSize;
+
+		ptSpiHandle->ucTxState = eSpiOpStateBsyInTx;
+		ptSpiHandle->ucRxState = eSpiOpStateBsyInRx;
+
+		// Enable both interrupts
+		ptSpiHandle->pSPIx->SPI_CR2 |= (1 << SPI_CR2_TXEIE) | (1 << SPI_CR2_RXNEIE);
+
+		// Kickstart transmission by writing first byte
+		if(uhSize > 0)
+		{
+			ptSpiHandle->pSPIx->SPI_DR = *pucTxBuff++;
+			ptSpiHandle->uhTxLen--;
+		}
+	}
+}
+
+static void SpiApplicationEvntCallBack(SPI_Handle_t* ptSpiHandle, uint8_t ucEvnt)
+{
+	return;
 }

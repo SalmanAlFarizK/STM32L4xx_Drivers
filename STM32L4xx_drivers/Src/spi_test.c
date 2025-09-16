@@ -18,11 +18,15 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 #include "stm32l476xx.h"
 #include "gpio.h"
 #include "spi.h"
 
 #define ALTERNATE_FUNCTION_5	(0x05)
+uint8_t ucTxBuff[] = "Hello World\r\n";
+uint8_t ucRxBuff[100] = {0};
+uint16_t uhBuffSize = sizeof(ucTxBuff);
 
 void Delay(uint32_t uiMs)
 {
@@ -43,25 +47,26 @@ SPI_Handle_t Spi1Handle;
 int main(void)
 {
 	/* Parameter initialization. */
-	uint8_t ucTxBuff[] = "Hello World\r\n";
-	uint8_t ucRxBuff[100] = {0};
-	uint16_t uhRxSize = sizeof(ucTxBuff);
 	InitLed();
 	IntSpi1();
 
+	SPI_IRQConfig(SPI1_IRQn, ENABLE);
+
+	/* Enable SPI. */
+	SPI_Enable(SPI1, ENABLE);
+
+	//SPI_TxDataIT(&Spi1Handle, ucTxBuff, uhBuffSize);
+	//SPI_RxDataIT(&Spi1Handle, ucRxBuff, uhBuffSize);
+	SPI_TransmitReceiveIT(&Spi1Handle, ucTxBuff, ucRxBuff, uhBuffSize);
+
 	while(1)
 	{
-		/* Enable SPI. */
-		SPI_Enable(SPI1, ENABLE);
+		if(memcmp(ucTxBuff, ucRxBuff, uhBuffSize) == 0)
+		{
 
-		/* Send data. */
-		SPI_TxRxData(SPI1, ucTxBuff, ucRxBuff, uhRxSize);
-
-
-		while(IsSpiBusy(SPI1));
-
-		/* Disable SPI. */
-		SPI_Enable(SPI1, DISABLE);
+			/* Disable SPI. */
+			SPI_Enable(SPI1, DISABLE);
+		}
 
 		Delay(100);
 	}
@@ -156,6 +161,10 @@ void IntSpi1(void)
 	Spi1Handle.SPIConfig.SPI_DeviceMode = eSPIModeMaster;
 	Spi1Handle.SPIConfig.SPI_SclkSpeed = eSpiSclkDiv2;
 	Spi1Handle.SPIConfig.SPI_SSM = eSsmSwEn;
+	Spi1Handle.pucTxBuff = ucTxBuff;
+	Spi1Handle.pucRxBuff = ucRxBuff;
+	Spi1Handle.uhRxLen = uhBuffSize;
+	Spi1Handle.uhTxLen = uhBuffSize;
 
 	/* Initialize SPI. */
 	SPI_Init(&Spi1Handle);
@@ -163,6 +172,12 @@ void IntSpi1(void)
 	/* SPOI SSI Config. */
 	SPI_SsiConfig(SPI1, ENABLE);
 
+	return;
+}
+
+void SPI1_IRQHandler(void)
+{
+	SPI_IRQHandling(&Spi1Handle);
 	return;
 }
 

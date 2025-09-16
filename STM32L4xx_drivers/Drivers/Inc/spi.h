@@ -35,6 +35,12 @@ typedef struct _SPI_Handle_t_
 {
 	SPI_Regdef_t* pSPIx;
 	SPI_Config_t  SPIConfig;
+	uint8_t* 	  pucTxBuff;
+	uint8_t* 	  pucRxBuff;
+	uint16_t 	  uhTxLen;
+	uint16_t 	  uhRxLen;
+	uint8_t 	  ucTxState;
+	uint8_t 	  ucRxState;
 } SPI_Handle_t;
 
 /******************************************************************************
@@ -103,6 +109,15 @@ typedef enum _SPI_SSM_
 	eSsmMax,
 } eSPI_SSM;
 
+typedef enum _SPI_OpStates_
+{
+	eSpiOpStateRdy = 0,
+	eSpiOpStateBsyInRx,
+	eSpiOpStateBsyInTx,
+	eSpiOpStateBsyInRxTx,
+	eSpiOpStateMax
+} eSPI_OpStates;
+
 /******************************************************************************
  * Function Declarations.
  *****************************************************************************/
@@ -113,11 +128,20 @@ void SPI_SsiConfig(SPI_Regdef_t* pSPIx, uint8_t ucEnorDi);
 void SPI_PclkCtrl(SPI_Regdef_t* pSPIx,uint8_t EnorDi);
 void SPI_TxData(SPI_Regdef_t* pSPIx, uint8_t* ucTxBuff, uint16_t uhTxSize);
 void SPI_RxData(SPI_Regdef_t* pSPIx, uint8_t* ucRxBuff, uint16_t uhRxSize);
+void SPI_TxDataIT(SPI_Handle_t* ptSpiHandle, uint8_t* pucTxBuff,
+				uint16_t uhTxSize);
+void SPI_RxDataIT(SPI_Handle_t* ptSpiHandle,
+				  uint8_t* pucRxBuff, uint16_t uhRxSize);
 void SPI_IRQConfig(uint8_t IRQNum, uint8_t EnOrDi);
 void SPI_IRQPriorityConfig(uint8_t IRQNum, uint8_t PriorityVal);
-void SPI_IRQHandling(SPI_Regdef_t* pSPIx);
+void SPI_IRQHandling(SPI_Handle_t* ptSpiHandle);
 bool IsSpiBusy(SPI_Regdef_t* pSPIx);
 void SPI_TxRxData(SPI_Regdef_t* pSPIx, uint8_t* ucTxBuff,
 		uint8_t* ucRxBuff, uint16_t uhSize);
+void SPI_ClearOvrFlag(SPI_Regdef_t* pSPIx);
+void SPI_CloseTransmission(SPI_Handle_t* ptSpiHandle);
+void SPI_CloseReception(SPI_Handle_t* ptSpiHandle);
+void SPI_TransmitReceiveIT(SPI_Handle_t* ptSpiHandle,
+        uint8_t* pucTxBuff, uint8_t* pucRxBuff, uint16_t uhSize);
 
 #endif /* INC_SPI_H_ */
