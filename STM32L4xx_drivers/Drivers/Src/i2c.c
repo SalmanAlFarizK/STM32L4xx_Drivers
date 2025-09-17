@@ -397,6 +397,42 @@ void I2C_MasterRxData(I2C_Handle_t* ptI2CHandle, uint8_t* ucRxBuff,
  *****************************************************************************/
 void I2C_IRQConfig(uint8_t IRQNum, uint8_t EnOrDi)
 {
+	if(ENABLE == EnOrDi)
+	{
+		if(IRQNum <= 31)
+		{
+			/* ISER0 Register. */
+			*NVIC_ISER0 |= ( 1 << IRQNum);
+		}
+		else if(IRQNum > 31 && IRQNum < 64)
+		{
+			/* ISER1 Register. */
+			*NVIC_ISER1 |= ( 1 << (IRQNum % 32));
+		}
+		else if(IRQNum >= 64 && IRQNum < 96)
+		{
+			/* ISER2 Register. */
+			*NVIC_ISER2 |= ( 1 << (IRQNum % 64));
+		}
+	}
+	else
+	{
+		if(IRQNum <= 31)
+		{
+			/* ISER0 Register. */
+			*NVIC_ICER0 |= ( 1 << IRQNum);
+		}
+		else if(IRQNum > 31 && IRQNum < 64)
+		{
+			/* ISER1 Register. */
+			*NVIC_ICER1 |= ( 1 << (IRQNum % 32));
+		}
+		else if(IRQNum >= 64 && IRQNum < 96)
+		{
+			/* ISER2 Register. */
+			*NVIC_ICER2 |= ( 1 << (IRQNum % 64));
+		}
+	}
 	return;
 }
 
@@ -480,4 +516,198 @@ static void GenerateStopCodition(I2C_Regdef_t* pI2Cx)
 	}
 
 	return;
+}
+
+/******************************************************************************
+ * @brief : Function For checking the i2c busy flag.
+ * @fn : IsI2CBusy(I2C_Regdef_t* pI2Cx)
+ *
+ * @param[in] : pI2Cx
+ *
+ * @param[out] : bool.
+ *
+ * @return : None
+ *
+ *****************************************************************************/
+void I2C_MasterTxDataIT(I2C_Handle_t* ptI2CHandle, uint8_t* ucTxBuff,
+					  uint16_t uhTxSize, uint8_t ucSlaveAddr)
+{
+	/* Parameter validity check. */
+	if((NULL != ptI2CHandle)
+	&& (NULL != ucTxBuff)
+	&& (NULL != ucTxBuff + uhTxSize))
+	{
+		/* Assign the TX buffer address. */
+		ptI2CHandle->pucTxBuff = ucTxBuff;
+
+		/* Assign the TX length info. */
+		ptI2CHandle->uhTxLen = uhTxSize;
+
+		/* Update the busy flag. */
+		ptI2CHandle->ucTxRxState = eI2cTxBusy;
+
+		/* Set the salve address as device address. */
+		ptI2CHandle->ucDevAddr = ucSlaveAddr;
+
+		/* Configure Control register. */
+		ptI2CHandle->pI2Cx->I2C_CR2 |= (ucSlaveAddr << 1);
+
+		/* Program the number of bytes to be transmitted. */
+		ptI2CHandle->pI2Cx->I2C_CR2 |= (uhTxSize << I2C_CR2_NBYTES);
+
+		/* Configure write enable. */
+		ptI2CHandle->pI2Cx->I2C_CR2 &= ~(1 << I2C_CR2_RD_WRN);
+
+		/* Configure auto end. */
+		ptI2CHandle->pI2Cx->I2C_CR2 |= (1 << I2C_CR2_AUTOEND);
+
+		/* Generate the start condition. */
+		GenerateStartCodition(ptI2CHandle->pI2Cx);
+
+		ptI2CHandle->pI2Cx->I2C_CR1 |= ((1 << I2C_CR1_TXIE) | (1 << I2C_CR1_STOPIE) | (1 << I2C_CR1_ERRIE) | (1 << I2C_CR1_TCIE));
+
+	}
+}
+
+/******************************************************************************
+ * @brief : Function For checking the i2c busy flag.
+ * @fn : IsI2CBusy(I2C_Regdef_t* pI2Cx)
+ *
+ * @param[in] : pI2Cx
+ *
+ * @param[out] : bool.
+ *
+ * @return : None
+ *
+ *****************************************************************************/
+void I2C_MasterRxDataIT(I2C_Handle_t* ptI2CHandle, uint8_t* ucRxBuff,
+		  uint16_t uhRxSize, uint8_t ucSlaveAddr)
+{
+	/* Parameter validity check. */
+	if((NULL != ptI2CHandle)
+	&& (NULL != ucRxBuff)
+	&& (NULL != ucRxBuff + uhRxSize))
+	{
+		/* Assign the TX buffer address. */
+		ptI2CHandle->pucRxBuff = ucRxBuff;
+
+		/* Assign the TX length info. */
+		ptI2CHandle->uhRxLen = uhRxSize;
+
+		/* Update the busy flag. */
+		ptI2CHandle->ucTxRxState = eI2cRxBusy;
+
+		/* Set the salve address as device address. */
+		ptI2CHandle->ucDevAddr = ucSlaveAddr;
+
+		/* Configure Control register. */
+		ptI2CHandle->pI2Cx->I2C_CR2 |= (ucSlaveAddr << 1);
+
+		/* Program the number of bytes to be transmitted. */
+		ptI2CHandle->pI2Cx->I2C_CR2 |= (uhRxSize << I2C_CR2_NBYTES);
+
+		/* Configure write enable. */
+		ptI2CHandle->pI2Cx->I2C_CR2 |= (1 << I2C_CR2_RD_WRN);
+
+		/* Configure auto end. */
+		ptI2CHandle->pI2Cx->I2C_CR2 |= (1 << I2C_CR2_AUTOEND);
+
+		/* Generate the start condition. */
+		GenerateStartCodition(ptI2CHandle->pI2Cx);
+
+		ptI2CHandle->pI2Cx->I2C_CR1 |= (1<<I2C_CR1_RXIE) | (1<<I2C_CR1_STOPIE) | (1<<I2C_CR1_ERRIE);
+
+	}
+}
+
+/******************************************************************************
+ * @brief : Function For checking the i2c busy flag.
+ * @fn : IsI2CBusy(I2C_Regdef_t* pI2Cx)
+ *
+ * @param[in] : pI2Cx
+ *
+ * @param[out] : bool.
+ *
+ * @return : None
+ *
+ *****************************************************************************/
+void I2C_IRQHandling(I2C_Handle_t* ptI2CHandle)
+{
+	/* Variable initialization. */
+	uint32_t uiReg1 = 0;
+	uint32_t uiReg2 = 0;
+
+	if(NULL != ptI2CHandle)
+	{
+		/* Check for the transmit interrupt. */
+		uiReg1 = (ptI2CHandle->pI2Cx->I2C_CR1 & ( 1 << I2C_CR1_TXIE));
+		uiReg2 = (ptI2CHandle->pI2Cx->I2C_ISR & ( 1 << I2C_ISR_TXIS));
+
+		if(uiReg1 && uiReg2)
+		{
+			if(ptI2CHandle->uhTxLen > 0)
+			{
+				ptI2CHandle->pI2Cx->I2C_TXDR = *(ptI2CHandle->pucTxBuff++);
+				ptI2CHandle->uhTxLen--;
+
+				/* Check if transmission completed. */
+				if(0 == ptI2CHandle->uhTxLen)
+				{
+					ptI2CHandle->pI2Cx->I2C_CR1 &= ~(1 << I2C_CR1_TXIE);
+				}
+			}
+		}
+
+		/* Check Reception interrupt. */
+		uiReg1 = (ptI2CHandle->pI2Cx->I2C_CR1 & ( 1 << I2C_CR1_RXIE));
+		uiReg2 = (ptI2CHandle->pI2Cx->I2C_ISR & ( 1 << I2C_ISR_RXNE));
+
+		if(uiReg1 && uiReg2)
+		{
+			if(ptI2CHandle->uhRxLen > 0)
+			{
+				/* Load the data to the reception buffer. */
+				*(ptI2CHandle->pucRxBuff++) = ptI2CHandle->pI2Cx->I2C_RXDR;
+
+				/* Decrement the size. */
+				ptI2CHandle->uhRxLen -= 1;
+
+				/* Check if reception completed. */
+				if(0 == ptI2CHandle->uhTxLen)
+				{
+					ptI2CHandle->pI2Cx->I2C_CR1 &= ~(1 << I2C_CR1_RXIE);
+				}
+			}
+		}
+
+		/* Check for STOPF detection */
+		uiReg1 = (ptI2CHandle->pI2Cx->I2C_CR1 & ( 1 << I2C_CR1_STOPIE));
+		uiReg2 = (ptI2CHandle->pI2Cx->I2C_ISR & ( 1 << I2C_ISR_STOPF));
+
+		if(uiReg1 && uiReg2)
+		{
+			/* Clear Stop detection flag. */
+			ptI2CHandle->pI2Cx->I2C_ICR |= ( 1 << I2C_ICR_STOPCF);
+
+			/* reset the state and buffers. */
+			ptI2CHandle->ucTxRxState = eI2cRxTxReady;
+			ptI2CHandle->pucRxBuff = NULL;
+			ptI2CHandle->pucTxBuff = NULL;
+			ptI2CHandle->uhRxLen = 0;
+			ptI2CHandle->uhTxLen = 0;
+		}
+
+		/* Generate Stop Condition if transmission completed. */
+		uiReg1 = (ptI2CHandle->pI2Cx->I2C_CR1 & ( 1 << I2C_CR1_TCIE));
+		uiReg2 = (ptI2CHandle->pI2Cx->I2C_ISR & ( 1 << I2C_ISR_TC));
+
+		if(uiReg1 && uiReg2)
+		{
+			if(ptI2CHandle->uhTxLen == 0 &&
+			   ptI2CHandle->ucTxRxState == eI2cTxBusy)
+			{
+				GenerateStopCodition(ptI2CHandle->pI2Cx);
+			}
+		}
+	}
 }

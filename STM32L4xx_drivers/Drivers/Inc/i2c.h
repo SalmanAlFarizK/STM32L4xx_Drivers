@@ -27,6 +27,14 @@ typedef enum _I2C_ACKState_
 	eI2cAckMax
 } I2C_ACKState;
 
+typedef enum _I2C_RxTxState_
+{
+	eI2cRxTxReady = 0,
+	eI2cRxBusy,
+	eI2cTxBusy,
+	eI2cStateMax
+} I2C_RxTxState;
+
 /******************************************************************************
  * Structure Definitions.
  *****************************************************************************/
@@ -48,6 +56,12 @@ typedef struct _I2C_Handle_t_
 {
 	I2C_Regdef_t* pI2Cx;
 	I2C_Config_t  I2CConfig;
+	uint8_t* pucTxBuff;
+	uint8_t* pucRxBuff;
+	uint16_t uhTxLen;
+	uint16_t uhRxLen;
+	uint8_t ucTxRxState;
+	uint8_t ucDevAddr;
 } I2C_Handle_t;
 
 /******************************************************************************
@@ -64,6 +78,12 @@ void I2C_MasterRxData(I2C_Handle_t* ptI2CHandle, uint8_t* ucRxBuff,
 void I2C_IRQConfig(uint8_t IRQNum, uint8_t EnOrDi);
 void I2C_IRQPriorityConfig(uint8_t IRQNum, uint8_t PriorityVal);
 bool IsI2CBusy(I2C_Regdef_t* pI2Cx);
+
+void I2C_MasterTxDataIT(I2C_Handle_t* ptI2CHandle, uint8_t* ucTxBuff,
+					  uint16_t uhTxSize, uint8_t ucSlaveAddr);
+void I2C_MasterRxDataIT(I2C_Handle_t* ptI2CHandle, uint8_t* ucRxBuff,
+		  uint16_t uhRxSize, uint8_t ucSlaveAddr);
+void I2C_IRQHandling(I2C_Handle_t* ptI2CHandle);
 
 
 
