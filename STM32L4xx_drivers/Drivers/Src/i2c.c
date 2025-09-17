@@ -673,7 +673,7 @@ void I2C_IRQHandling(I2C_Handle_t* ptI2CHandle)
 				ptI2CHandle->uhRxLen -= 1;
 
 				/* Check if reception completed. */
-				if(0 == ptI2CHandle->uhTxLen)
+				if(0 == ptI2CHandle->uhRxLen)
 				{
 					ptI2CHandle->pI2Cx->I2C_CR1 &= ~(1 << I2C_CR1_RXIE);
 				}

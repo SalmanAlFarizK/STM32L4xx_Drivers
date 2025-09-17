@@ -54,7 +54,7 @@ int main(void)
 
 	InitLed();
 	InitI2C1();
-	I2C_MasterTxDataIT(&tI2C1, ucTxBuff, uhTxLen, SLAVE_ADDRESS);
+	I2C_MasterRxDataIT(&tI2C1, ucRxBuff, uhTxLen, SLAVE_ADDRESS);
 
 	while(1)
 	{
@@ -99,9 +99,9 @@ void InitI2C1(void)
 	tI2C1.I2CConfig.I2C_AckControl = eI2cACKEn;
 	tI2C1.I2CConfig.I2C_SCLSpeed = I2C_SCL_SPEED_FM;
 	tI2C1.I2CConfig.I2C_DeviceAddress = 0x60;
-	tI2C1.pucTxBuff = ucTxBuff;
-	tI2C1.uhTxLen = uhTxLen;
-	tI2C1.ucTxRxState = eI2cTxBusy;
+	tI2C1.pucRxBuff = ucRxBuff;
+	tI2C1.uhRxLen = uhTxLen;
+	tI2C1.ucTxRxState = eI2cRxBusy;
 
 	I2C_Init(&tI2C1);
 
