@@ -57,10 +57,12 @@ int main(void)
 
 	//SPI_TxDataIT(&Spi1Handle, ucTxBuff, uhBuffSize);
 	//SPI_RxDataIT(&Spi1Handle, ucRxBuff, uhBuffSize);
-	SPI_TransmitReceiveIT(&Spi1Handle, ucTxBuff, ucRxBuff, uhBuffSize);
+	//SPI_TransmitReceiveIT(&Spi1Handle, ucTxBuff, ucRxBuff, uhBuffSize);
 
 	while(1)
 	{
+		printf("Hello world\n");
+
 		if(memcmp(ucTxBuff, ucRxBuff, uhBuffSize) == 0)
 		{
 

@@ -309,6 +309,43 @@ typedef struct _SPI_Regdef_t_
 
 
 /******************************************************************************
+ * Section: I2C
+ * @brief : Register Definition Structure for I2C.
+ *****************************************************************************/
+typedef struct _I2C_Regdef_t_
+{
+	__vo uint32_t I2C_CR1;
+	__vo uint32_t I2C_CR2;
+	__vo uint32_t I2C_OAR1;
+	__vo uint32_t I2C_OAR2;
+	__vo uint32_t I2C_TIMINGR;
+	__vo uint32_t I2C_TIMEOUTR;
+	__vo uint32_t I2C_ISR;
+	__vo uint32_t I2C_ICR;
+	__vo uint32_t I2C_PECR;
+	__vo uint32_t I2C_RXDR;
+	__vo uint32_t I2C_TXDR;
+} I2C_Regdef_t;
+
+/* I2C Peripheral Definitions. */
+#define I2C1						((I2C_Regdef_t*)I2C1_BASEADDR)
+#define I2C2						((I2C_Regdef_t*)I2C2_BASEADDR)
+#define I2C3						((I2C_Regdef_t*)I2C3_BASEADDR)
+
+/* Clock Enable/Disable Macros for I2C Peripheral. */
+
+#define I2C1_PCLK_EN()				(RCC->RCC_APB1ENR1 |= (1 << 21))
+#define I2C2_PCLK_EN()				(RCC->RCC_APB1ENR1 |= (1 << 22))
+#define I2C3_PCLK_EN()				(RCC->RCC_APB1ENR1 |= (1 << 23))
+
+
+#define I2C1_PCLK_DI()				(RCC->RCC_APB1ENR1 &= ~(1 << 21))
+#define I2C2_PCLK_DI()				(RCC->RCC_APB1ENR1 &= ~(1 << 22))
+#define I2C3_PCLK_DI()				(RCC->RCC_APB1ENR1 &= ~(1 << 23))
+
+
+
+/******************************************************************************
  * Section: EXTI
  * @brief : Register Definition Structure for EXTI.
  *****************************************************************************/
