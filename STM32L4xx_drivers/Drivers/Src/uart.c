@@ -578,7 +578,24 @@ void USART_TxData(USART_Regdef_t* pUSARTx, uint8_t* ucTxBuff, uint16_t uhTxSize)
  *****************************************************************************/
 void USART_RxData(USART_Regdef_t* pUSARTx, uint8_t* ucRxBuff, uint16_t uhRxSize)
 {
+	/* Parameter validity check. */
+	if((NULL != pUSARTx)
+	&& (NULL != ucRxBuff)
+	&& (NULL != ucRxBuff + uhRxSize))
+	{
+		for(uint32_t uiIdx = 0; uiIdx < uhRxSize; ++uiIdx)
+		{
+			/* Wait until data is available. */
+			while(!IsUSARTRxDataAvailable(pUSARTx));
 
+			/* Load the reception buffer with data from RX data register. */
+			ucRxBuff[uiIdx] = pUSARTx->USART_RDR;
+
+			pUSARTx->USART_ICR |= (1 << USART_ICR_ORECF);
+
+			//pUSARTx->USART_ISR &= ~(1 << USART_ISR_RXNE);
+		}
+	}
 }
 
 /******************************************************************************
@@ -621,7 +638,26 @@ bool IsUSARTBusyTx(USART_Regdef_t* pUSARTx)
  * @return : None
  *
  *****************************************************************************/
-bool IsUSARTBusyRx(USART_Regdef_t* pUSARTx)
+bool IsUSARTRxDataAvailable(USART_Regdef_t* pUSARTx)
 {
-	return 0;
+    bool isAvailable = false;
+
+    /* Validity check. */
+    if(NULL != pUSARTx)
+    {
+        /* Check for overrun error first */
+        if(pUSARTx->USART_ISR & (1 << USART_ISR_ORE))
+        {
+            /* Clear overrun error */
+            pUSARTx->USART_ICR |= (1 << USART_ICR_ORECF);
+        }
+
+        /* If RXNE is set */
+        if(pUSARTx->USART_ISR & (1 << USART_ISR_RXNE))
+        {
+            isAvailable = true;
+        }
+    }
+
+    return isAvailable;
 }

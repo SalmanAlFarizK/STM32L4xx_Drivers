@@ -122,7 +122,7 @@ void USART_TxData(USART_Regdef_t* pUSARTx, uint8_t* ucTxBuff, uint16_t uhTxSize)
 void USART_RxData(USART_Regdef_t* pUSARTx, uint8_t* ucRxBuff, uint16_t uhRxSize);
 
 bool IsUSARTBusyTx(USART_Regdef_t* pUSARTx);
-bool IsUSARTBusyRx(USART_Regdef_t* pUSARTx);
+bool IsUSARTRxDataAvailable(USART_Regdef_t* pUSARTx);
 
 void USART_IRQConfig(uint8_t ucIRQNumber, uint8_t EnOrDi);
 void USART_IRQPriorityConfig(uint8_t ucIRQNumber, uint32_t IRQPriorityVal);

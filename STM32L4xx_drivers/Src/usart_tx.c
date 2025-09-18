@@ -32,6 +32,7 @@
 uint8_t ucTxBuff[] = "Hello World\r\n";
 uint16_t uhTxLen = sizeof(ucTxBuff);
 uint8_t ucRxBuff[100] = {0};
+uint8_t ucUarttxBuff[100];
 
 void Delay(uint32_t uiMs)
 {
@@ -55,8 +56,15 @@ int main(void)
 
 	while(1)
 	{
-		USART_TxData(USART2, ucTxBuff, uhTxLen);
+		USART_RxData(USART2, ucRxBuff, 6);
+
+		memcpy(ucUarttxBuff, "Received : ",11);
+		memcpy(ucUarttxBuff + 11, ucRxBuff, 6);
+		ucUarttxBuff[11+6] = '\r';
+		ucUarttxBuff[11 + 6 + 1] = '\n';
+		USART_TxData(USART2, ucUarttxBuff, 11 + 6 + 2);
 		Delay(500);
+
 	}
 }
 
