@@ -306,6 +306,45 @@ typedef struct _SPI_Regdef_t_
 #define SPI2_PCLK_DI()				(RCC->RCC_APB1ENR1 &= ~(1 << 14))
 #define SPI3_PCLK_DI()				(RCC->RCC_APB1ENR1 &= ~(1 << 15))
 
+/******************************************************************************
+ * Section: USART
+ * @brief : Register Definition Structure for USART.
+ *****************************************************************************/
+typedef struct _USART_Regdef_t_
+{
+	__vo uint32_t USART_CR1;
+	__vo uint32_t USART_CR2;
+	__vo uint32_t USART_CR3;
+	__vo uint32_t USART_BRR;
+	__vo uint32_t USART_GTPR;
+	__vo uint32_t USART_RTOR;
+	__vo uint32_t USART_RQR;
+	__vo uint32_t USART_ISR;
+	__vo uint32_t USART_ICR;
+	__vo uint32_t USART_RDR;
+	__vo uint32_t USART_TDR;
+} USART_Regdef_t;
+
+/* USART Peripheral Definitions. */
+#define USART1						((USART_Regdef_t*)USART1_BASEADDR)
+#define USART2						((USART_Regdef_t*)USART2_BASEADDR)
+#define USART3						((USART_Regdef_t*)USART3_BASEADDR)
+#define UART4						((USART_Regdef_t*)UART4_BASEADDR)
+#define UART5						((USART_Regdef_t*)UART5_BASEADDR)
+
+/* Clock Enable Macros for USART Peripheral. */
+#define USART1_PCLK_EN()				(RCC->RCC_APB2ENR  |= (1 << 14))
+#define USART2_PCLK_EN()				(RCC->RCC_APB1ENR1 |= (1 << 17))
+#define USART3_PCLK_EN()				(RCC->RCC_APB1ENR1 |= (1 << 18))
+#define UART4_PCLK_EN()					(RCC->RCC_APB1ENR1 |= (1 << 19))
+#define UART5_PCLK_EN()					(RCC->RCC_APB1ENR1 |= (1 << 20))
+
+#define USART1_PCLK_DI()				(RCC->RCC_APB2ENR  &= ~(1 << 14))
+#define USART2_PCLK_DI()				(RCC->RCC_APB1ENR1 &= ~(1 << 17))
+#define USART3_PCLK_DI()				(RCC->RCC_APB1ENR1 &= ~(1 << 18))
+#define UART4_PCLK_DI()					(RCC->RCC_APB1ENR1 &= ~(1 << 19))
+#define UART5_PCLK_DI()					(RCC->RCC_APB1ENR1 &= ~(1 << 20))
+
 
 
 /******************************************************************************

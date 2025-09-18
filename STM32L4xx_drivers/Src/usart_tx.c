@@ -23,17 +23,15 @@
 #include "gpio.h"
 #include "spi.h"
 #include "i2c.h"
+#include "uart.h"
 
-#define ALTERNATE_FUNCTION_4	(0x04)
+#define ALTERNATE_FUNCTION_7	(0x07)
 #define SLAVE_ADDRESS			(0x55)
 
 /* Parameter initialization. */
 uint8_t ucTxBuff[] = "Hello World\r\n";
 uint16_t uhTxLen = sizeof(ucTxBuff);
 uint8_t ucRxBuff[100] = {0};
-
-
-I2C_Handle_t tI2C1;
 
 void Delay(uint32_t uiMs)
 {
@@ -46,18 +44,18 @@ void Delay(uint32_t uiMs)
 
 void InitLed(void);
 void TestLed(void);
-void InitI2C1(void);
-void InitI2C1Gpio(void);
+void InitUartGpio(void);
+void InitUart(void);
+
+USART_Handle_t tUart2;
 
 int main(void)
 {
-
-	InitLed();
-	InitI2C1();
-	I2C_MasterTxDataIT(&tI2C1, ucTxBuff, uhTxLen, SLAVE_ADDRESS);
+	InitUart();
 
 	while(1)
 	{
+		USART_TxData(USART2, ucTxBuff, uhTxLen);
 		Delay(500);
 	}
 }
@@ -91,65 +89,48 @@ void TestLed(void)
 	return;
 }
 
-void InitI2C1(void)
+void InitUartGpio(void)
 {
-	InitI2C1Gpio();
+	GPIO_Handle_t tUartGpio = {0};
 
-	tI2C1.pI2Cx = I2C1;
-	tI2C1.I2CConfig.I2C_AckControl = eI2cACKEn;
-	tI2C1.I2CConfig.I2C_SCLSpeed = I2C_SCL_SPEED_FM;
-	tI2C1.I2CConfig.I2C_DeviceAddress = 0x60;
-	tI2C1.pucTxBuff = ucTxBuff;
-	tI2C1.uhRxLen = uhTxLen;
-	tI2C1.ucTxRxState = eI2cTxBusy;
+	tUartGpio.pGPIOx = GPIOA;
+	tUartGpio.GpioPinConfig.GPIO_PinMode = eGPIO_AfMode;
+	tUartGpio.GpioPinConfig.GPIO_PinOpType = eGPIO_OpPushPull;
+	tUartGpio.GpioPinConfig.GPIO_PinSpeed = eGPIO_VeryHighSpeed;
+	tUartGpio.GpioPinConfig.GPIO_PinPuPdCtrl = eGPIO_NoPuPd;
+	tUartGpio.GpioPinConfig.GPIO_PinAltFunMode = ALTERNATE_FUNCTION_7;
 
-	I2C_Init(&tI2C1);
+	GPIO_PeriClkCtrl(GPIOA, ENABLE);
 
-	I2C_Enable(I2C1, ENABLE);
+	/* Configure TX pin. */
+	tUartGpio.GpioPinConfig.GPIO_PinNumber = eGPIO_PIN_2;
+	GPIO_Init(&tUartGpio);
 
-	/* Configure interrupt. */
-	I2C_IRQConfig(I2C1_EV_IRQn, ENABLE);
-
+	/* Configure RX pin. */
+	tUartGpio.GpioPinConfig.GPIO_PinNumber = eGPIO_PIN_3;
+	GPIO_Init(&tUartGpio);
 
 	return;
 }
 
-/**
- * SDA ---> PB9
- * SCL ---> PB8
- */
-void InitI2C1Gpio(void)
+void InitUart(void)
 {
-	GPIO_Handle_t tI2CGpio = {0};
+	/* Initialize UART GPIO. */
+	InitUartGpio();
 
-	tI2CGpio.pGPIOx = GPIOB;
-	tI2CGpio.GpioPinConfig.GPIO_PinMode 		= eGPIO_AfMode;
-	tI2CGpio.GpioPinConfig.GPIO_PinAltFunMode	= ALTERNATE_FUNCTION_4;
-	tI2CGpio.GpioPinConfig.GPIO_PinOpType 		= eGPIO_OpOpenDrain;
-	tI2CGpio.GpioPinConfig.GPIO_PinSpeed 		= eGPIO_VeryHighSpeed;
-	tI2CGpio.GpioPinConfig.GPIO_PinPuPdCtrl 	= eGPIO_Pu;
+	tUart2.pUSARTx = USART2;
+	tUart2.USARTConfig.USART_Baud = USART_BAUD_115200;
+	tUart2.USARTConfig.USART_HwFlowControl = eUsartHwFlwCtrlNone;
+	tUart2.USARTConfig.USART_Mode = eUsartModeTxRx;
+	tUart2.USARTConfig.USART_NoOfStopBits = eUsartStopBit1;
+	tUart2.USARTConfig.USART_ParityControl = eUsartParityNone;
+	tUart2.USARTConfig.USART_WordLength = eUsartWordLen8Bits;
 
-	/* Enable Clock. */
-	GPIO_PeriClkCtrl(GPIOB, ENABLE);
+	/* Initialize USART2. */
+	USART_Init(&tUart2);
 
-	/* Configure the SDA pin. */
-	tI2CGpio.GpioPinConfig.GPIO_PinNumber = eGPIO_PIN_9;
-
-	/* Initialize SDA Pin. */
-	GPIO_Init(&tI2CGpio);
-
-	/* Configure the SCL pin. */
-	tI2CGpio.GpioPinConfig.GPIO_PinNumber = eGPIO_PIN_8;
-
-	/* Initialize SCL Pin. */
-	GPIO_Init(&tI2CGpio);
-
-	return;
-}
-
-void I2C1_EV_IRQHandler(void)
-{
-	I2C_IRQHandling(&tI2C1);
+	/* Enable USART2. */
+	USART_PeripheralControl(USART2, ENABLE);
 
 	return;
 }
