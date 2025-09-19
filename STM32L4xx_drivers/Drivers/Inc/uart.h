@@ -49,6 +49,12 @@ typedef struct _USART_Handle_t_
 {
 	USART_Regdef_t* pUSARTx;
 	USART_Config_t USARTConfig;
+	uint8_t* pucTxBuffer;
+	uint8_t* pucRxBuffer;
+	uint16_t uhTxLen;
+	uint16_t uhRxLen;
+	uint8_t ucTxBsyState;
+	uint8_t ucRxBsyState;
 } USART_Handle_t;
 
 /******************************************************************************
@@ -110,6 +116,17 @@ typedef enum _eUsart_WrdLength_
 	eUsartWordLenMax
 } eUsart_WrdLength;
 
+/*
+ * @brief : Enum representing state of USART RX and TX.
+ */
+typedef enum _eUsart_State_
+{
+	eUsartStateReady = 0,
+	eUsartStateBsyTx,
+	eUsartStateBsyRx,
+	eUsartStateMax,
+} eUsart_State;
+
 
 /******************************************************************************
  * Function Declarations.
@@ -123,9 +140,13 @@ void USART_RxData(USART_Regdef_t* pUSARTx, uint8_t* ucRxBuff, uint16_t uhRxSize)
 
 bool IsUSARTBusyTx(USART_Regdef_t* pUSARTx);
 bool IsUSARTRxDataAvailable(USART_Regdef_t* pUSARTx);
+void USART_IRQConfig(uint8_t IRQNum, uint8_t EnOrDi);
 
-void USART_IRQConfig(uint8_t ucIRQNumber, uint8_t EnOrDi);
 void USART_IRQPriorityConfig(uint8_t ucIRQNumber, uint32_t IRQPriorityVal);
 void USART_IRQHandling(USART_Handle_t* ptUSARTHandle);
+void USART_TxDataIT(USART_Handle_t* ptUSARTHandle,
+					uint8_t* ucTxBuff, uint16_t uhTxSize);
+void USART_RxDataIT(USART_Handle_t* ptUSARTHandle,
+					uint8_t* ucRxBuff, uint16_t uhRxSize);
 
 #endif /* INC_UART_H_ */

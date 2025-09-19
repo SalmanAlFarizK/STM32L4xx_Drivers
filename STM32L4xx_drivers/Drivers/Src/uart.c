@@ -661,3 +661,270 @@ bool IsUSARTRxDataAvailable(USART_Regdef_t* pUSARTx)
 
     return isAvailable;
 }
+
+/******************************************************************************
+ * @brief : Function For Initializing SPI Peripheral.
+ * @fn : SPI_Init(SPI_Handle_t* ptSpiHandle)
+ *
+ * @param[in] : ptSpiHandle
+ *
+ * @param[out] : None.
+ *
+ * @return : None
+ *
+ *****************************************************************************/
+void USART_IRQConfig(uint8_t IRQNum, uint8_t EnOrDi)
+{
+	if(ENABLE == EnOrDi)
+	{
+		if(IRQNum <= 31)
+		{
+			/* ISER0 Register. */
+			*NVIC_ISER0 |= ( 1 << IRQNum);
+		}
+		else if(IRQNum > 31 && IRQNum < 64)
+		{
+			/* ISER1 Register. */
+			*NVIC_ISER1 |= ( 1 << (IRQNum % 32));
+		}
+		else if(IRQNum >= 64 && IRQNum < 96)
+		{
+			/* ISER2 Register. */
+			*NVIC_ISER2 |= ( 1 << (IRQNum % 64));
+		}
+	}
+	else
+	{
+		if(IRQNum <= 31)
+		{
+			/* ISER0 Register. */
+			*NVIC_ICER0 |= ( 1 << IRQNum);
+		}
+		else if(IRQNum > 31 && IRQNum < 64)
+		{
+			/* ISER1 Register. */
+			*NVIC_ICER1 |= ( 1 << (IRQNum % 32));
+		}
+		else if(IRQNum >= 64 && IRQNum < 96)
+		{
+			/* ISER2 Register. */
+			*NVIC_ICER2 |= ( 1 << (IRQNum % 64));
+		}
+	}
+
+	return;
+}
+
+/******************************************************************************
+ * @brief : Function For Initializing SPI Peripheral.
+ * @fn : SPI_Init(SPI_Handle_t* ptSpiHandle)
+ *
+ * @param[in] : ptSpiHandle
+ *
+ * @param[out] : None.
+ *
+ * @return : None
+ *
+ *****************************************************************************/
+void USART_IRQPriorityConfig(uint8_t ucIRQNumber, uint32_t IRQPriorityVal)
+{
+	uint8_t iprx = 0;
+	uint8_t iprxSection = 0;
+	uint8_t shiftAmnt = 0;
+
+	/* Find the priority register for corresponding irq number. */
+	iprx = (ucIRQNumber / 4);
+
+	/* Find the priority register section for corresponding irq number. */
+	iprxSection = (ucIRQNumber % 4);
+
+	shiftAmnt = (8 * iprxSection ) + (8 - NO_PR_BITS_IMPLEMENTED);
+	*(NVIC_PR_BASE_ADDR + iprx) |= ( IRQPriorityVal << shiftAmnt);
+}
+
+/******************************************************************************
+ * @brief : Function For Initializing SPI Peripheral.
+ * @fn : SPI_Init(SPI_Handle_t* ptSpiHandle)
+ *
+ * @param[in] : ptSpiHandle
+ *
+ * @param[out] : None.
+ *
+ * @return : None
+ *
+ *****************************************************************************/
+void USART_IRQHandling(USART_Handle_t* ptUSARTHandle)
+{
+	/* Parameter initialization. */
+	uint32_t uiRegVal1 = 0;
+	uint32_t uiRegVal2 = 0;
+
+	/* Validity check. */
+	if(NULL != ptUSARTHandle)
+	{
+		/* Handle TXE Interrupt. */
+		uiRegVal1 = ptUSARTHandle->pUSARTx->USART_ISR & ( 1 << USART_ISR_TXE);
+		uiRegVal2 = ptUSARTHandle->pUSARTx->USART_CR1 & ( 1 << USART_CR1_TXEIE);
+
+		if(uiRegVal1 && uiRegVal2)
+		{
+			if(ptUSARTHandle->uhTxLen > 0)
+			{
+				/* Load the data to data register. */
+				ptUSARTHandle->pUSARTx->USART_TDR = *(ptUSARTHandle->pucTxBuffer);
+
+				/* Increment the buffer address. */
+				ptUSARTHandle->pucTxBuffer++;
+
+				/* Decrement the length. */
+				ptUSARTHandle->uhTxLen -= 1;
+			}
+
+			else if(0 == ptUSARTHandle->uhTxLen)
+			{
+				/* Disable TXEIE. */
+				ptUSARTHandle->pUSARTx->USART_CR1 &= ~( 1 << USART_CR1_TXEIE);
+
+				/* Enable TCIE. */
+				ptUSARTHandle->pUSARTx->USART_CR1 |= ( 1 << USART_CR1_TCIE);
+			}
+		}
+
+		/* Handle TCE interrupt. */
+		uiRegVal1 = ptUSARTHandle->pUSARTx->USART_ISR & ( 1 << USART_ISR_TC);
+		uiRegVal2 = ptUSARTHandle->pUSARTx->USART_CR1 & ( 1 << USART_CR1_TCIE);
+
+		if(uiRegVal1 && uiRegVal2)
+		{
+			/* Clear TC */
+			ptUSARTHandle->pUSARTx->USART_ICR |= ( 1 << USART_ICR_TCCF);
+
+			/* Transmission completed. */
+			ptUSARTHandle->ucTxBsyState = eUsartStateReady;
+
+			/* Clear TCIE. */
+			ptUSARTHandle->pUSARTx->USART_CR1 &= ~( 1 << USART_CR1_TCIE);
+
+		}
+
+		/* Handle RXNEIE. */
+		uiRegVal1 = ptUSARTHandle->pUSARTx->USART_ISR & ( 1 << USART_ISR_RXNE);
+		uiRegVal2 = ptUSARTHandle->pUSARTx->USART_CR1 & ( 1 << USART_CR1_RXNEIE);
+
+		//bool val = IsUSARTRxDataAvailable(ptUSARTHandle->pUSARTx);
+
+
+		if(uiRegVal1 && uiRegVal2)
+		{
+			if(ptUSARTHandle->uhRxLen > 0)
+			{
+				/* Load the data into the reception buffer. */
+				*(ptUSARTHandle->pucRxBuffer) = (ptUSARTHandle->pUSARTx->USART_RDR);
+
+				ptUSARTHandle->pucRxBuffer++;
+
+				/* Decrement the length. */
+				ptUSARTHandle->uhRxLen -= 1;
+
+				ptUSARTHandle->pUSARTx->USART_RQR |= ( 1 << USART_RQR_RXFRQ);
+			}
+
+			else if(0 == ptUSARTHandle->uhRxLen)
+			{
+				/* Reception completed. */
+				ptUSARTHandle->ucTxBsyState = eUsartStateReady;
+
+				/* Disable RXNEIE. */
+				ptUSARTHandle->pUSARTx->USART_CR1 &= ~( 1 << USART_CR1_RXNEIE);
+			}
+			/* Handle potential overrun error */
+			if (ptUSARTHandle->pUSARTx->USART_ISR & (1 << USART_ISR_ORE))
+			{
+			    uint8_t dummy = ptUSARTHandle->pUSARTx->USART_RDR; // Clear RXNE
+
+			    //ptUSARTHandle->pUSARTx->USART_ICR |= (1 << USART_ICR_ORECF); // Clear overrun
+
+			    (void)dummy;
+			}
+		}
+
+	}
+
+	return;
+}
+
+/******************************************************************************
+ * @brief : Function For Initializing SPI Peripheral.
+ * @fn : SPI_Init(SPI_Handle_t* ptSpiHandle)
+ *
+ * @param[in] : ptSpiHandle
+ *
+ * @param[out] : None.
+ *
+ * @return : None
+ *
+ *****************************************************************************/
+void USART_TxDataIT(USART_Handle_t* ptUSARTHandle,
+					uint8_t* ucTxBuff, uint16_t uhTxSize)
+{
+	/* Validity check. */
+	if((NULL != ptUSARTHandle)
+	&& (NULL != ucTxBuff)
+	&& (NULL != ucTxBuff + uhTxSize))
+	{
+		if(eUsartStateBsyTx != ptUSARTHandle->ucTxBsyState)
+		{
+			/* Update buffer address. */
+			ptUSARTHandle->pucTxBuffer = ucTxBuff;
+
+			/* Update length info. */
+			ptUSARTHandle->uhTxLen = uhTxSize;
+
+			/* Update state info. */
+			ptUSARTHandle->ucTxBsyState = eUsartStateBsyTx;
+
+			/* Enable transmission interrupt. */
+			ptUSARTHandle->pUSARTx->USART_CR1 |= ( 1 << USART_CR1_TXEIE);
+		}
+	}
+
+	return;
+}
+
+/******************************************************************************
+ * @brief : Function For Initializing SPI Peripheral.
+ * @fn : SPI_Init(SPI_Handle_t* ptSpiHandle)
+ *
+ * @param[in] : ptSpiHandle
+ *
+ * @param[out] : None.
+ *
+ * @return : None
+ *
+ *****************************************************************************/
+void USART_RxDataIT(USART_Handle_t* ptUSARTHandle,
+					uint8_t* ucRxBuff, uint16_t uhRxSize)
+{
+	/* Validity check. */
+	if((NULL != ptUSARTHandle)
+	&& (NULL != ucRxBuff)
+	&& (NULL != ucRxBuff + uhRxSize))
+	{
+		if(eUsartStateBsyRx != ptUSARTHandle->ucTxBsyState)
+		{
+			/* Update buffer address. */
+			ptUSARTHandle->pucRxBuffer = ucRxBuff;
+
+			/* Update length info. */
+			ptUSARTHandle->uhRxLen = uhRxSize;
+
+			/* Update state info. */
+			ptUSARTHandle->ucTxBsyState = eUsartStateBsyRx;
+
+			/* Enable transmission interrupt. */
+			ptUSARTHandle->pUSARTx->USART_CR1 |= ( 1 << USART_CR1_RXNEIE);
+		}
+	}
+
+	return;
+}
