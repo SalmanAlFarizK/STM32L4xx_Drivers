@@ -120,6 +120,12 @@
 #define GPIOF_BASEADDR				(AHB2PERIPH_BASE + 0x1400)
 #define GPIOG_BASEADDR				(AHB2PERIPH_BASE + 0x1800)
 #define GPIOH_BASEADDR				(AHB2PERIPH_BASE + 0x1C00)
+#define ADC_BASEADDR				(AHB2PERIPH_BASE + 0x8040000)
+
+#define ADC1_BASEADDR				(ADC_BASEADDR + 0x000)
+#define ADC2_BASEADDR				(ADC_BASEADDR + 0x100)
+#define ADC3_BASEADDR				(ADC_BASEADDR + 0x200)
+#define MASTER_SLAVE_ADC_COMMON_REG	(ADC_BASEADDR + 0x300)
 
 
 /******************************************************************************
@@ -381,6 +387,75 @@ typedef struct _I2C_Regdef_t_
 #define I2C1_PCLK_DI()				(RCC->RCC_APB1ENR1 &= ~(1 << 21))
 #define I2C2_PCLK_DI()				(RCC->RCC_APB1ENR1 &= ~(1 << 22))
 #define I2C3_PCLK_DI()				(RCC->RCC_APB1ENR1 &= ~(1 << 23))
+
+
+
+/******************************************************************************
+ * Section: ADC
+ * @brief : Register Definition Structure for ADC.
+ *****************************************************************************/
+/*
+ * @ brief: Structure defining register information for independent ADC.
+ */
+typedef struct _ADC_Regdef_t_
+{
+	__vo uint32_t ADC_ISR;
+	__vo uint32_t ADC_IER;
+	__vo uint32_t ADC_CR;
+	__vo uint32_t ADC_CFGR;
+	__vo uint32_t ADC_CFGR2;
+	__vo uint32_t ADC_SMPR1;
+	__vo uint32_t ADC_SMPR2;
+	uint32_t Reserved0;
+	__vo uint32_t ADC_TR1;
+	__vo uint32_t ADC_TR2;
+	__vo uint32_t ADC_TR3;
+	uint32_t Reserved1;
+	__vo uint32_t ADC_SQR1;
+	__vo uint32_t ADC_SQR2;
+	__vo uint32_t ADC_SQR3;
+	__vo uint32_t ADC_SQR4;
+	__vo uint32_t ADC_DR;
+	uint32_t Reserved2;
+	uint32_t Reserved3;
+	__vo uint32_t ADC_JSQR;
+	uint32_t Reserved4;
+	uint32_t Reserved5;
+	uint32_t Reserved6;
+	uint32_t Reserved7;
+	__vo uint32_t ADC_OFR1;
+	__vo uint32_t ADC_OFR2;
+	__vo uint32_t ADC_OFR3;
+	__vo uint32_t ADC_OFR4;
+	uint32_t Reserved8;
+	uint32_t Reserved9;
+	uint32_t Reserved10;
+	uint32_t Reserved11;
+	__vo uint32_t ADC_JDR1;
+	__vo uint32_t ADC_JDR2;
+	__vo uint32_t ADC_JDR3;
+	__vo uint32_t ADC_JDR4;
+	uint32_t Reserved12;
+	uint32_t Reserved13;
+	uint32_t Reserved14;
+	uint32_t Reserved15;
+	__vo uint32_t ADC_AWD2CR;
+	__vo uint32_t ADC_AWD3CR;
+	uint32_t Reserved16;
+	uint32_t Reserved17;
+	__vo uint32_t ADC_DIFSEL;
+	__vo uint32_t ADC_CALFACT;
+} ADC_Regdef_t;
+
+#define ADC1						((ADC_Regdef_t*)ADC1_BASEADDR)
+#define ADC2						((ADC_Regdef_t*)ADC2_BASEADDR)
+#define ADC3						((ADC_Regdef_t*)ADC3_BASEADDR)
+
+/* Clock Enable/Disable Macros for ADC Peripheral. */
+#define ADC_PCLK_EN()				(RCC->RCC_AHB2_ENR |= (1 << 13))
+
+#define ADC_PCLK_DI()				(RCC->RCC_AHB2_ENR &= ~(1 << 13))
+
 
 
 
